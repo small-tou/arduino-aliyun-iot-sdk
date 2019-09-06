@@ -63,7 +63,7 @@ void powerCallback(JsonVariant p)
 }
 ```
 
-## Apis 可用方法
+## API 可用方法
 
 ```c++
 // 在主程序 loop 中调用，检查连接和定时发送信息
