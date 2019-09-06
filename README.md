@@ -4,7 +4,7 @@
 
 ## Usage
 
-```
+```c++
 #include <ESP8266WiFi.h>
 static WiFiClient espClient;
 
