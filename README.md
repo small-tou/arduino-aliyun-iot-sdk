@@ -1,4 +1,4 @@
-# Arduino Toplevel Client for Aliyun IoT Platform
+# Arduino TopLevel Client for Aliyun IoT Platform
 
 > `AliyunIoTSDK` 可以帮助你快速连接阿里云 IoT 平台，通过和阿里云物联网开发平台配合，可快速实现各种硬件应用，包括了很上层的封装，无需自己解析数据体，绑定事件即可，在 esp8266 平台充分测试（NodeMCU 1.0）
 
