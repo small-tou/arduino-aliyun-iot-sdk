@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For AliyunIoTSDK
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AliyunIoTSDK	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin 	KEYWORD2
+send 	KEYWORD2
+sendEvent 	KEYWORD2
+bindData 	KEYWORD2
+unbindData 	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
