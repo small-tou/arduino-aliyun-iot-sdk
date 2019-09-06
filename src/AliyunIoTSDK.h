@@ -24,14 +24,16 @@ private:
   static char clientId[256];
   static char mqttUsername[100];
 
-  // 定时检查 mqtt 链接
-  static void mqttCheckConnect();
-
-public:
   // 标记一些 topic 模板
   static char ALINK_TOPIC_PROP_POST[150];
   static char ALINK_TOPIC_PROP_SET[150];
   static char ALINK_TOPIC_EVENT[150];
+  
+  // 定时检查 mqtt 链接
+  static void mqttCheckConnect();
+
+public:
+  
 
   // 在主程序 loop 中调用，检查连接和定时发送信息
   static void loop();
