@@ -2,7 +2,7 @@
 
 > `AliyunIoTSDK` 库可以帮助你快速连接阿里云 IoT 平台，通过和阿里云物联网开发平台配合，可快速实现各种硬件应用，包括了很上层的封装，无需自己解析数据体，绑定事件即可，在 esp8266 平台充分测试（NodeMCU 1.0）
 
-## Usage
+## Usage 使用示例
 
 ```c++
 #include <ESP8266WiFi.h>
@@ -63,7 +63,7 @@ void powerCallback(JsonVariant p)
 }
 ```
 
-## Apis
+## Apis 可用方法
 
 ```c++
 // 在主程序 loop 中调用，检查连接和定时发送信息
@@ -144,11 +144,11 @@ void powerCallback(JsonVariant p)
   static int unbindData(char *key);
 ```
 
-## Examples
+## Examples 示例
 
 buiding...
 
-## Limitations
+## Limitations 使用限制和说明
 
  - 本库不包含 wifi 连接的代码，需先建立连接，然后将 client 传入
  - 依赖 PubSubClient ，在使用前，请务必修改 PubSubClient 的连接参数，否则无法使用
@@ -158,7 +158,7 @@ buiding...
  - 默认 5000ms 检测一次连接状态，可以通过 CHECK_INTERVAL 修改此值
 
 
-## Compatible Hardware
+## Compatible Hardware 适用硬件
 
  - 在 NodeMCU 设备中测试过，其他类型的设备暂无测试，有问题请提 issues
 
