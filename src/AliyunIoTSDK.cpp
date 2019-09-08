@@ -102,6 +102,7 @@ void AliyunIoTSDK::mqttCheckConnect()
     {
         if (!client->connected())
         {
+            client->disconnect();
             Serial.println("Connecting to MQTT Server ...");
             mqttConnecting = true;
             if (client->connect(clientId, mqttUsername, mqttPwd))
@@ -121,7 +122,7 @@ void AliyunIoTSDK::mqttCheckConnect()
     }
 }
 
-void AliyunIoTSDK::begin(WiFiClient &espClient,
+void AliyunIoTSDK::begin(Client &espClient,
                          const char *_productKey,
                          const char *_deviceName,
                          const char *_deviceSecret,
@@ -147,8 +148,6 @@ void AliyunIoTSDK::begin(WiFiClient &espClient,
     signcontent += "timestamp";
     signcontent += timestamp;
 
-    Serial.println("signcontent");
-    Serial.println(signcontent);
     String pwd = hmac256(signcontent, deviceSecret);
 
     strcpy(mqttPwd, pwd.c_str());
@@ -184,7 +183,7 @@ void AliyunIoTSDK::sendEvent(const char *eventId, const char *param)
     sprintf(jsonBuf, ALINK_EVENT_BODY_FORMAT, param, eventId);
     Serial.println(jsonBuf);
     boolean d = client->publish(topicKey, jsonBuf);
-    Serial.print("publish:0 失败;1成功");
+    Serial.print("publish:0 成功:");
     Serial.println(d);
 }
 void AliyunIoTSDK::sendEvent(const char *eventId)
@@ -200,7 +199,7 @@ void AliyunIoTSDK::send(const char *param)
     sprintf(jsonBuf, ALINK_BODY_FORMAT, param);
     Serial.println(jsonBuf);
     boolean d = client->publish(ALINK_TOPIC_PROP_POST, jsonBuf);
-    Serial.print("publish:0 失败;1成功");
+    Serial.print("publish:0 成功:");
     Serial.println(d);
 }
 void AliyunIoTSDK::send(char *key, float number)

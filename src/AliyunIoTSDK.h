@@ -2,8 +2,7 @@
 #define ALIYUN_IOT_SDK_H
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <ESP8266WiFi.h>
-
+#include "Client.h"
 
 typedef void (*poniter_fun)(JsonVariant ele); //定义一个函数指针
 
@@ -43,7 +42,7 @@ public:
    * @param ssid wifi名
    * @param passphrase wifi密码
    */
-  static void begin(WiFiClient &espClient,
+  static void begin(Client &espClient,
                     const char *_productKey,
                     const char *_deviceName,
                     const char *_deviceSecret,
