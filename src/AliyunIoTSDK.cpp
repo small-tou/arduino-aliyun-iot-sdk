@@ -25,6 +25,7 @@ static PubSubClient *client = NULL;
 char AliyunIoTSDK::clientId[256] = "";
 char AliyunIoTSDK::mqttUsername[100] = "";
 char AliyunIoTSDK::mqttPwd[256] = "";
+char AliyunIoTSDK::domain[150] = "";
 
 char AliyunIoTSDK::ALINK_TOPIC_PROP_POST[150] = "";
 char AliyunIoTSDK::ALINK_TOPIC_PROP_SET[150] = "";
@@ -114,6 +115,8 @@ void AliyunIoTSDK::mqttCheckConnect()
                 // delay(65000);
             }
             mqttConnecting = false;
+        }else{
+            Serial.println("state is connected");
         }
     }
 }
@@ -155,7 +158,6 @@ void AliyunIoTSDK::begin(WiFiClient &espClient,
     sprintf(ALINK_TOPIC_PROP_SET, "/sys/%s/%s/thing/service/property/set", productKey, deviceName);
     sprintf(ALINK_TOPIC_EVENT, "/sys/%s/%s/thing/event", productKey, deviceName);
 
-    char domain[150];
     sprintf(domain, "%s.iot-as-mqtt.%s.aliyuncs.com", productKey, region);
     client->setServer(domain, MQTT_PORT); /* 连接WiFi之后，连接MQTT服务器 */
     client->setCallback(callback);
@@ -165,12 +167,13 @@ void AliyunIoTSDK::begin(WiFiClient &espClient,
 
 void AliyunIoTSDK::loop()
 {
+    client->loop();
     if (millis() - lastMs >= CHECK_INTERVAL)
     {
         lastMs = millis();
         mqttCheckConnect();
     }
-    client->loop();
+    
 }
 
 void AliyunIoTSDK::sendEvent(const char *eventId, const char *param)

@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 
+
 typedef void (*poniter_fun)(JsonVariant ele); //定义一个函数指针
 
 typedef struct poniter_desc
@@ -23,18 +24,17 @@ private:
   static char mqttPwd[256];
   static char clientId[256];
   static char mqttUsername[100];
-
-  // 标记一些 topic 模板
-  static char ALINK_TOPIC_PROP_POST[150];
-  static char ALINK_TOPIC_PROP_SET[150];
-  static char ALINK_TOPIC_EVENT[150];
-  
+  static char domain[150];
+ 
   // 定时检查 mqtt 链接
   static void mqttCheckConnect();
 
 public:
   
-
+  // 标记一些 topic 模板
+  static char ALINK_TOPIC_PROP_POST[150];
+  static char ALINK_TOPIC_PROP_SET[150];
+  static char ALINK_TOPIC_EVENT[150];
   // 在主程序 loop 中调用，检查连接和定时发送信息
   static void loop();
 
