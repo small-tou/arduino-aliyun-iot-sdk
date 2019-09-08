@@ -3,7 +3,7 @@
 #include <PubSubClient.h>
 #include <SHA256.h>
 
-#define CHECK_INTERVAL 5000
+#define CHECK_INTERVAL 10000
 
 static const char *deviceName = NULL;
 static const char *productKey = NULL;
