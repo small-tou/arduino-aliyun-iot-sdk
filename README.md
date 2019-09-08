@@ -1,4 +1,4 @@
-# Arduino TopLevel Client for Aliyun IoT Platform
+# Arduino TopLevel Client for aliyun IoT Platform
 
  `AliyunIoTSDK` 可以帮助你快速连接阿里云 IoT 平台，通过和阿里云物联网开发平台配合，可快速实现各种硬件应用，包括了很上层的封装，无需自己解析数据体，绑定事件即可，在 esp8266 平台充分测试（NodeMCU 1.0）
 
@@ -74,7 +74,7 @@ void powerCallback(JsonVariant p)
    * @param ssid wifi名
    * @param passphrase wifi密码
    */
-  static void begin(WiFiClient &espClient,
+  static void begin(Client &espClient,
                     const char *_productKey,
                     const char *_deviceName,
                     const char *_deviceSecret,
@@ -160,11 +160,21 @@ buiding...
 
 ## Compatible Hardware 适用硬件
 
- - 在 NodeMCU 设备中测试过，其他类型的设备暂无测试，有问题请提 issues
+本 SDK 基于 PubSubClient 底层库开发，兼容列表与 PubSubClient 相同。
 
-The library cannot currently be used with hardware based on the ENC28J60 chip –
-such as the Nanode or the Nuelectronics Ethernet Shield. For those, there is an
-[alternative library](https://github.com/njh/NanodeMQTT) available.
+The library uses the Arduino Ethernet Client api for interacting with the underlying network hardware. This means it Just Works with a growing number of boards and shields, including:
+
+ - Arduino Ethernet
+- Arduino Ethernet Shield
+- Arduino YUN – use the included YunClient in place of EthernetClient, and be sure to do a Bridge.begin() first
+- Arduino WiFi Shield - if you want to send packets > 90 bytes with this shield, enable the MQTT_MAX_TRANSFER_SIZE define in PubSubClient.h.
+- Sparkfun WiFly Shield – library
+- TI CC3000 WiFi - library
+- Intel Galileo/Edison
+- ESP8266
+- ESP32
+
+The library cannot currently be used with hardware based on the ENC28J60 chip – such as the Nanode or the Nuelectronics Ethernet Shield. For those, there is an alternative library available.
 
 ## License
 
