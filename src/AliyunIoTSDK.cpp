@@ -197,6 +197,8 @@ void AliyunIoTSDK::sendEvent(const char *eventId)
     sendEvent(eventId, "{}");
 }
 unsigned long lastSendMS = 0;
+
+// 检查是否有数据需要发送
 void AliyunIoTSDK::messageBufferCheck()
 {
     int bufferSize = 0;
@@ -227,6 +229,8 @@ void AliyunIoTSDK::messageBufferCheck()
         }
     }
 }
+
+// 发送 buffer 数据
 void AliyunIoTSDK::sendBuffer()
 {
     int i;
@@ -244,6 +248,20 @@ void AliyunIoTSDK::sendBuffer()
     buffer = "{" + buffer.substring(0, buffer.length() - 1) + "}";
     send(buffer.c_str());
 }
+
+void addMessageToBuffer(char *key, String value)
+{
+    int i;
+    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
+    {
+        if (PropertyMessageBuffer[i].key.length() == 0)
+        {
+            PropertyMessageBuffer[i].key = key;
+            PropertyMessageBuffer[i].value = value;
+            break;
+        }
+    }
+}
 void AliyunIoTSDK::send(const char *param)
 {
 
@@ -256,59 +274,23 @@ void AliyunIoTSDK::send(const char *param)
 }
 void AliyunIoTSDK::send(char *key, float number)
 {
-    int i;
-    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
-    {
-        if (PropertyMessageBuffer[i].key.length() == 0)
-        {
-            PropertyMessageBuffer[i].key = key;
-            PropertyMessageBuffer[i].value = String(number);
-            break;
-        }
-    }
+    addMessageToBuffer(key, String(number));
     messageBufferCheck();
 }
 void AliyunIoTSDK::send(char *key, int number)
 {
-    int i;
-    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
-    {
-        if (PropertyMessageBuffer[i].key.length() == 0)
-        {
-            PropertyMessageBuffer[i].key = key;
-            PropertyMessageBuffer[i].value = String(number);
-            break;
-        }
-    }
+    addMessageToBuffer(key, String(number));
     messageBufferCheck();
 }
 void AliyunIoTSDK::send(char *key, double number)
 {
-    int i;
-    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
-    {
-        if (PropertyMessageBuffer[i].key.length() == 0)
-        {
-            PropertyMessageBuffer[i].key = key;
-            PropertyMessageBuffer[i].value = String(number);
-            break;
-        }
-    }
+    addMessageToBuffer(key, String(number));
     messageBufferCheck();
 }
 
 void AliyunIoTSDK::send(char *key, char *text)
 {
-    int i;
-    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
-    {
-        if (PropertyMessageBuffer[i].key.length() == 0)
-        {
-            PropertyMessageBuffer[i].key = key;
-            PropertyMessageBuffer[i].value = "\"" + String(text) + "\"";
-            break;
-        }
-    }
+    addMessageToBuffer(key, "\"" + String(text) + "\"");
     messageBufferCheck();
 }
 
