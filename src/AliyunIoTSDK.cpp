@@ -3,12 +3,23 @@
 #include <PubSubClient.h>
 #include <SHA256.h>
 
+
 #define CHECK_INTERVAL 10000
+#define MESSAGE_BUFFER_SIZE 10
 
 static const char *deviceName = NULL;
 static const char *productKey = NULL;
 static const char *deviceSecret = NULL;
 static const char *region = NULL;
+
+
+
+struct DeviceProperty {
+    String key;
+    String value;
+};
+
+ DeviceProperty PropertyMessageBuffer[MESSAGE_BUFFER_SIZE];
 
 #define MQTT_PORT 1883
 
@@ -171,6 +182,7 @@ void AliyunIoTSDK::loop()
     {
         lastMs = millis();
         mqttCheckConnect();
+        messageBufferCheck();
     }
     
 }
@@ -190,12 +202,53 @@ void AliyunIoTSDK::sendEvent(const char *eventId)
 {
     sendEvent(eventId, "{}");
 }
-
+unsigned long lastSendMS = 0;
+void AliyunIoTSDK::messageBufferCheck(){
+    int bufferSize = 0;
+    for (int i = 0; i < MESSAGE_BUFFER_SIZE; i++)
+    {
+        if (PropertyMessageBuffer[i].key.length() > 0)
+        {
+            bufferSize++;
+        }
+    }
+    Serial.println("bufferSize:");
+    Serial.println(bufferSize);
+    if(bufferSize > 0){
+        if(bufferSize >= MESSAGE_BUFFER_SIZE){
+            sendBuffer();
+        }else{
+             unsigned long nowMS = millis();
+            // 3s 发送一次数据
+            if(nowMS - lastSendMS > 5000){
+                sendBuffer();
+                lastSendMS = nowMS;
+            }
+        }
+    }
+    
+}
+void AliyunIoTSDK::sendBuffer(){
+    int i;
+    String buffer;
+    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
+    {
+        if (PropertyMessageBuffer[i].key.length() > 0)
+        {
+            buffer += "\""+PropertyMessageBuffer[i].key+"\":"+PropertyMessageBuffer[i].value+",";
+            PropertyMessageBuffer[i].key = "";
+            PropertyMessageBuffer[i].value = "";
+        }
+    }
+    
+    buffer = "{"+buffer.substring(0,buffer.length() - 1)+"}";
+    send(buffer.c_str());
+    
+}
 void AliyunIoTSDK::send(const char *param)
 {
 
     char jsonBuf[1024];
-
     sprintf(jsonBuf, ALINK_BODY_FORMAT, param);
     Serial.println(jsonBuf);
     boolean d = client->publish(ALINK_TOPIC_PROP_POST, jsonBuf);
@@ -204,28 +257,60 @@ void AliyunIoTSDK::send(const char *param)
 }
 void AliyunIoTSDK::send(char *key, float number)
 {
-    char param[128];
-    sprintf(param, "{\"%s\":%f}", key, number);
-    send(param);
+    int i;
+    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
+    {
+        if (PropertyMessageBuffer[i].key.length() == 0)
+        {
+            PropertyMessageBuffer[i].key = key;
+            PropertyMessageBuffer[i].value = String(number);
+            break;
+        }
+    }
+    messageBufferCheck();
 }
 void AliyunIoTSDK::send(char *key, int number)
 {
-    char param[128];
-    sprintf(param, "{\"%s\":%d}", key, number);
-    send(param);
+    int i;
+    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
+    {
+        if (PropertyMessageBuffer[i].key.length() == 0)
+        {
+            PropertyMessageBuffer[i].key = key;
+            PropertyMessageBuffer[i].value = String(number);
+            break;
+        }
+    }
+    messageBufferCheck();
 }
 void AliyunIoTSDK::send(char *key, double number)
 {
-    char param[128];
-    sprintf(param, "{\"%s\":%f}", key, number);
-    send(param);
+    int i;
+    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
+    {
+        if (PropertyMessageBuffer[i].key.length() == 0)
+        {
+            PropertyMessageBuffer[i].key = key;
+            PropertyMessageBuffer[i].value = String(number);
+            break;
+        }
+    }
+    messageBufferCheck();
 }
 
 void AliyunIoTSDK::send(char *key, char *text)
 {
-    char param[1024];
-    sprintf(param, "{\"%s\":\"%s\"}", key, text);
-    send(param);
+    int i;
+    for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
+    {
+        if (PropertyMessageBuffer[i].key.length() == 0)
+        {
+            PropertyMessageBuffer[i].key = key;
+            PropertyMessageBuffer[i].value = "\""+String(text)+"\"";
+            break;
+        }
+    }
+    messageBufferCheck();
 }
 
 int AliyunIoTSDK::bindData(char *key, poniter_fun fp)

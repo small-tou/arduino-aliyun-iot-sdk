@@ -28,6 +28,8 @@ private:
   // 定时检查 mqtt 链接
   static void mqttCheckConnect();
 
+  static void messageBufferCheck();
+  static void sendBuffer();
 public:
   
   // 标记一些 topic 模板
