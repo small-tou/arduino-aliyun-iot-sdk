@@ -3,7 +3,6 @@
 #include <PubSubClient.h>
 #include <SHA256.h>
 
-
 #define CHECK_INTERVAL 10000
 #define MESSAGE_BUFFER_SIZE 10
 
@@ -12,14 +11,13 @@ static const char *productKey = NULL;
 static const char *deviceSecret = NULL;
 static const char *region = NULL;
 
-
-
-struct DeviceProperty {
+struct DeviceProperty
+{
     String key;
     String value;
 };
 
- DeviceProperty PropertyMessageBuffer[MESSAGE_BUFFER_SIZE];
+DeviceProperty PropertyMessageBuffer[MESSAGE_BUFFER_SIZE];
 
 #define MQTT_PORT 1883
 
@@ -101,11 +99,6 @@ static void callback(char *topic, byte *payload, unsigned int length)
     }
 }
 
-// void AliyunIoTSDK::bind(MQTT_CALLBACK_SIGNATURE)
-// {
-
-//     //    return *this;
-// }
 static bool mqttConnecting = false;
 void AliyunIoTSDK::mqttCheckConnect()
 {
@@ -127,7 +120,9 @@ void AliyunIoTSDK::mqttCheckConnect()
                 // delay(65000);
             }
             mqttConnecting = false;
-        }else{
+        }
+        else
+        {
             Serial.println("state is connected");
         }
     }
@@ -184,7 +179,6 @@ void AliyunIoTSDK::loop()
         mqttCheckConnect();
         messageBufferCheck();
     }
-    
 }
 
 void AliyunIoTSDK::sendEvent(const char *eventId, const char *param)
@@ -203,7 +197,8 @@ void AliyunIoTSDK::sendEvent(const char *eventId)
     sendEvent(eventId, "{}");
 }
 unsigned long lastSendMS = 0;
-void AliyunIoTSDK::messageBufferCheck(){
+void AliyunIoTSDK::messageBufferCheck()
+{
     int bufferSize = 0;
     for (int i = 0; i < MESSAGE_BUFFER_SIZE; i++)
     {
@@ -214,36 +209,40 @@ void AliyunIoTSDK::messageBufferCheck(){
     }
     Serial.println("bufferSize:");
     Serial.println(bufferSize);
-    if(bufferSize > 0){
-        if(bufferSize >= MESSAGE_BUFFER_SIZE){
+    if (bufferSize > 0)
+    {
+        if (bufferSize >= MESSAGE_BUFFER_SIZE)
+        {
             sendBuffer();
-        }else{
-             unsigned long nowMS = millis();
+        }
+        else
+        {
+            unsigned long nowMS = millis();
             // 3s 发送一次数据
-            if(nowMS - lastSendMS > 5000){
+            if (nowMS - lastSendMS > 5000)
+            {
                 sendBuffer();
                 lastSendMS = nowMS;
             }
         }
     }
-    
 }
-void AliyunIoTSDK::sendBuffer(){
+void AliyunIoTSDK::sendBuffer()
+{
     int i;
     String buffer;
     for (i = 0; i < MESSAGE_BUFFER_SIZE; i++)
     {
         if (PropertyMessageBuffer[i].key.length() > 0)
         {
-            buffer += "\""+PropertyMessageBuffer[i].key+"\":"+PropertyMessageBuffer[i].value+",";
+            buffer += "\"" + PropertyMessageBuffer[i].key + "\":" + PropertyMessageBuffer[i].value + ",";
             PropertyMessageBuffer[i].key = "";
             PropertyMessageBuffer[i].value = "";
         }
     }
-    
-    buffer = "{"+buffer.substring(0,buffer.length() - 1)+"}";
+
+    buffer = "{" + buffer.substring(0, buffer.length() - 1) + "}";
     send(buffer.c_str());
-    
 }
 void AliyunIoTSDK::send(const char *param)
 {
@@ -306,7 +305,7 @@ void AliyunIoTSDK::send(char *key, char *text)
         if (PropertyMessageBuffer[i].key.length() == 0)
         {
             PropertyMessageBuffer[i].key = key;
-            PropertyMessageBuffer[i].value = "\""+String(text)+"\"";
+            PropertyMessageBuffer[i].value = "\"" + String(text) + "\"";
             break;
         }
     }
