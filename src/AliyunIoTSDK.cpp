@@ -209,8 +209,8 @@ void AliyunIoTSDK::messageBufferCheck()
             bufferSize++;
         }
     }
-    Serial.println("bufferSize:");
-    Serial.println(bufferSize);
+    // Serial.println("bufferSize:");
+    // Serial.println(bufferSize);
     if (bufferSize > 0)
     {
         if (bufferSize >= MESSAGE_BUFFER_SIZE)

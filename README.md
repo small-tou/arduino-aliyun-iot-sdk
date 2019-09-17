@@ -10,30 +10,22 @@
 ## Usage 使用示例
 
 ```c++
+// 引入 wifi 模块，并实例化，不同的芯片这里的依赖可能不同
 #include <ESP8266WiFi.h>
 static WiFiClient espClient;
 
+// 引入阿里云 IoT SDK
 #include <AliyunIoTSDK.h>
 
+// 设置产品和设备的信息，从阿里云设备信息里查看
 #define PRODUCT_KEY "xxx"
 #define DEVICE_NAME "Device_D"
 #define DEVICE_SECRET "xxxxxxxxxxxxxx"
 #define REGION_ID "cn-shanghai"
 
+// 设置 wifi 信息
 #define WIFI_SSID "xxxxx"
 #define WIFI_PASSWD "xxxxx"
-
-void wifiInit(const char *ssid, const char *passphrase)
-{
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, passphrase);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(1000);
-        Serial.println("WiFi not Connect");
-    }
-    Serial.println("Connected to AP");
-}
 
 void setup()
 {
@@ -57,6 +49,20 @@ void loop()
 {
     AliyunIoTSDK::loop();
 }
+
+// 初始化 wifi 连接
+void wifiInit(const char *ssid, const char *passphrase)
+{
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(ssid, passphrase);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(1000);
+        Serial.println("WiFi not Connect");
+    }
+    Serial.println("Connected to AP");
+}
+
 // 电源属性修改的回调函数
 void powerCallback(JsonVariant p)
 {
