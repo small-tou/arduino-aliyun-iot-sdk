@@ -5,6 +5,7 @@
 
 #define CHECK_INTERVAL 10000
 #define MESSAGE_BUFFER_SIZE 10
+#define RETRY_CRASH_COUNT 5
 
 static const char *deviceName = NULL;
 static const char *productKey = NULL;
@@ -28,6 +29,7 @@ DeviceProperty PropertyMessageBuffer[MESSAGE_BUFFER_SIZE];
 #define ALINK_EVENT_BODY_FORMAT "{\"id\": \"123\",\"version\": \"1.0\",\"params\": %s,\"method\": \"thing.event.%s.post\"}"
 
 static unsigned long lastMs = 0;
+static int retry_count = 0;
 
 static PubSubClient *client = NULL;
 
@@ -100,6 +102,7 @@ static void callback(char *topic, byte *payload, unsigned int length)
 }
 
 static bool mqttConnecting = false;
+void(* resetFunc) (void) = 0; //制造重启命令
 void AliyunIoTSDK::mqttCheckConnect()
 {
     if (client != NULL && !mqttConnecting)
@@ -117,13 +120,17 @@ void AliyunIoTSDK::mqttCheckConnect()
             {
                 Serial.print("MQTT Connect err:");
                 Serial.println(client->state());
-                // delay(65000);
+                retry_count++;
+                if(retry_count > RETRY_CRASH_COUNT){
+                    resetFunc();
+                }
             }
             mqttConnecting = false;
         }
         else
         {
             Serial.println("state is connected");
+            retry_count = 0;
         }
     }
 }
