@@ -7,6 +7,10 @@
 - v0.2 增加属性发送 buffer，5秒一次或者10条buffer满，才会一起发送数据，节省请求次数
 - v0.1 上线
 
+## 依赖项
+- Arduino需要安装 ArduinoJson,Crypto,PubSubClient库
+- Esp8266 需要在Arduino中安装 [ESP8266库](https://github.com/esp8266/Arduino)
+
 ## Usage 使用示例
 
 ```c++
