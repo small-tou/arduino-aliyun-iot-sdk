@@ -143,6 +143,8 @@ void AliyunIoTSDK::begin(Client &espClient,
 {
 
     client = new PubSubClient(espClient);
+    client->setBufferSize(1024);
+	client->setKeepAlive(60);
     productKey = _productKey;
     deviceName = _deviceName;
     deviceSecret = _deviceSecret;
