@@ -112,5 +112,38 @@ public:
    * @param key 物模型的key
    */
   static int unbindData(char *key);
+
+  /**
+   * 自定义发布topic
+   * @param topic 要发布的topic
+   * @param payload 要发布的消息体
+   * @param retained 是否需要开启保留
+   */
+  static boolean publish(const char *topic, const char *payload, bool retained);
+  
+  static boolean publish(const char *topic, const char *payload);
+
+  /**
+   * 自定义订阅topic
+   * @param topic 订阅的topic
+   * @param qos 
+   * @param fp 回调函数
+   */
+  static boolean subscribe(char* topic, uint8_t qos, poniter_fun fp);
+
+  /**
+   * 自定义订阅topic
+   * @param topic 订阅的topic
+   * @param fp 回调函数
+   */
+  static boolean subscribe(char* topic, poniter_fun fp);
+
+  /**
+   * 取消订阅指定topic
+   * @param topic 订阅的topic
+   */
+  static boolean unsubscribe(char* topic);
+
+
 };
 #endif

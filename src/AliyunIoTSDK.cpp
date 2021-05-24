@@ -88,15 +88,25 @@ static void callback(char *topic, byte *payload, unsigned int length)
     payload[length] = '\0';
     Serial.println((char *)payload);
 
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, payload); //反序列化JSON数据
+
     if (strstr(topic, AliyunIoTSDK::ALINK_TOPIC_PROP_SET))
     {
-
-        StaticJsonDocument<200> doc;
-        DeserializationError error = deserializeJson(doc, payload); //反序列化JSON数据
-
         if (!error) //检查反序列化是否成功
         {
             parmPass(doc.as<JsonVariant>()); //将参数传递后打印输出
+        }
+    }else
+    {
+        // 自定义订阅回调
+        for (int i = 0; i < DATA_CALLBACK_SIZE; i++)
+        {
+            if (poniter_array[i].key)
+            {   
+                if(strcmp(topic, poniter_array[i].key) == 0)
+                poniter_array[i].fp(doc.as<JsonVariant>());
+            }
         }
     }
 }
@@ -331,4 +341,35 @@ int AliyunIoTSDK::unbindData(char *key)
         }
     }
     return -1;
+}
+
+
+boolean AliyunIoTSDK::publish(const char *topic, const char *payload, bool retained){
+    return client->publish(topic, payload, retained);
+}
+
+boolean AliyunIoTSDK::publish(const char *topic, const char *payload){
+    return client->publish(topic, payload);
+}
+
+boolean AliyunIoTSDK::subscribe(char* topic, uint8_t qos, poniter_fun fp){
+    boolean ret = false;
+    if(client->subscribe(topic, qos)){
+        ret = true;
+        bindData(topic, fp);
+    }
+    return ret;
+}
+
+boolean AliyunIoTSDK::subscribe(char* topic, poniter_fun fp){
+    return subscribe(topic, 0, fp);
+}
+
+boolean AliyunIoTSDK::unsubscribe(char* topic){
+    boolean ret = false;
+    if(client->unsubscribe(topic)){
+        ret = true;
+        unbindData(topic);
+    }
+    return ret;
 }
