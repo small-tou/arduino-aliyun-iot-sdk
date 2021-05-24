@@ -41,6 +41,7 @@ char AliyunIoTSDK::domain[150] = "";
 char AliyunIoTSDK::ALINK_TOPIC_PROP_POST[150] = "";
 char AliyunIoTSDK::ALINK_TOPIC_PROP_SET[150] = "";
 char AliyunIoTSDK::ALINK_TOPIC_EVENT[150] = "";
+char AliyunIoTSDK::ALINK_TOPIC_USER[150] = "";
 
 static String hmac256(const String &signcontent, const String &ds)
 {
@@ -97,7 +98,7 @@ static void callback(char *topic, byte *payload, unsigned int length)
         {
             parmPass(doc.as<JsonVariant>()); //将参数传递后打印输出
         }
-    }else
+    }else if(strstr(topic, AliyunIoTSDK::ALINK_TOPIC_USER))
     {
         // 自定义订阅回调
         for (int i = 0; i < DATA_CALLBACK_SIZE; i++)
@@ -181,6 +182,7 @@ void AliyunIoTSDK::begin(Client &espClient,
     sprintf(ALINK_TOPIC_PROP_POST, "/sys/%s/%s/thing/event/property/post", productKey, deviceName);
     sprintf(ALINK_TOPIC_PROP_SET, "/sys/%s/%s/thing/service/property/set", productKey, deviceName);
     sprintf(ALINK_TOPIC_EVENT, "/sys/%s/%s/thing/event", productKey, deviceName);
+    sprintf(ALINK_TOPIC_USER, "/%s/%s/user", productKey, deviceName);
 
     sprintf(domain, "%s.iot-as-mqtt.%s.aliyuncs.com", productKey, region);
     client->setServer(domain, MQTT_PORT); /* 连接WiFi之后，连接MQTT服务器 */
@@ -352,11 +354,31 @@ boolean AliyunIoTSDK::publish(const char *topic, const char *payload){
     return client->publish(topic, payload);
 }
 
+boolean AliyunIoTSDK::publishUser(const char *topicSuffix, const char *payload){
+    char topic[150]; 
+    strcpy(topic, ALINK_TOPIC_USER);
+    return AliyunIoTSDK::publish(strcat(topic, topicSuffix), payload);
+}
+
+boolean AliyunIoTSDK::subscribeUser(const char *topicSuffix, poniter_fun fp){
+    char *topic = new char[150];
+    strcpy(topic, ALINK_TOPIC_USER);
+    return AliyunIoTSDK::subscribe(strcat(topic, topicSuffix), fp);
+}
+
+boolean AliyunIoTSDK::unsubscribeUser(char *topicSuffix){
+    char *topic = new char[150];
+    strcpy(topic, ALINK_TOPIC_USER);
+    return AliyunIoTSDK::unsubscribe(strcat(topic, topicSuffix));
+}
+
 boolean AliyunIoTSDK::subscribe(char* topic, uint8_t qos, poniter_fun fp){
     boolean ret = false;
     if(client->subscribe(topic, qos)){
         ret = true;
         bindData(topic, fp);
+        Serial.print("subcribe: ");
+        Serial.println(topic);
     }
     return ret;
 }
@@ -370,6 +392,8 @@ boolean AliyunIoTSDK::unsubscribe(char* topic){
     if(client->unsubscribe(topic)){
         ret = true;
         unbindData(topic);
+        Serial.print("unsubcribe: ");
+        Serial.println(topic);
     }
     return ret;
 }
