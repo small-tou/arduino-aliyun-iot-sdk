@@ -39,6 +39,15 @@ void setup()
 
     // 绑定属性回调
     AliyunIoTSDK::bindData("PowerSwitch", powerCallback);
+
+    // 操作用户自定义Topic
+    AliyunIoTSDK::subscribeUser("/get", callback);
+
+/*
+    下面为操作其他各类topic方法，注意替换自己的参数
+    AliyunIoTSDK::subscribe("/sys/${ProductKey}/${deviceName}/thing/service/${tsl.service.identifier}", callback);
+    AliyunIoTSDK::publish("/sys/${ProductKey}/${deviceName}/thing/service/${tsl.service.identifier}_reply", callback);
+*/
 }
 
 unsigned long lastMsMain = 0;
@@ -55,6 +64,12 @@ void loop()
     }
 }
 
+void callback(JsonVariant p)
+{
+    Serial.println("custom topic callback");
+    serializeJsonPretty(p, Serial);
+    Serial.println();
+}
 
 void powerCallback(JsonVariant p)
 {

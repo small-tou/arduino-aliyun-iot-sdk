@@ -36,6 +36,8 @@ public:
   static char ALINK_TOPIC_PROP_POST[150];
   static char ALINK_TOPIC_PROP_SET[150];
   static char ALINK_TOPIC_EVENT[150];
+  static char ALINK_TOPIC_USER[150];
+
   // 在主程序 loop 中调用，检查连接和定时发送信息
   static void loop();
 
@@ -112,5 +114,58 @@ public:
    * @param key 物模型的key
    */
   static int unbindData(char *key);
+
+  /**
+   * 发布topic
+   * @param topic 要发布的topic
+   * @param payload 要发布的消息体
+   * @param retained 是否需要开启保留
+   */
+  static boolean publish(const char *topic, const char *payload, bool retained);
+  
+  static boolean publish(const char *topic, const char *payload);
+
+  /**
+   * 发布阿里云用户自定义Topic类
+   * @param topicSuffix topic后缀，即user后面的部分
+   * @param payload 发布的消息
+   */
+  static boolean publishUser(const char *topicSuffix, const char *payload);
+
+  /**
+   * 订阅阿里云用户自定义Topic类
+   * @param topicSuffix topic后缀，即user后面的部分
+   * @param fp 回调函数
+   */
+  static boolean subscribeUser(const char *topicSuffix, poniter_fun fp);
+  
+  /**
+   * 取消订阅阿里云用户自定义Topic类
+   * @param topicSuffix topic后缀，即user后面的部分
+   */
+  static boolean unsubscribeUser(char *topicSuffix);
+
+  /**
+   * 订阅topic
+   * @param topic 订阅的topic
+   * @param qos 
+   * @param fp 回调函数
+   */
+  static boolean subscribe(char* topic, uint8_t qos, poniter_fun fp);
+
+  /**
+   * 订阅topic
+   * @param topic 订阅的topic
+   * @param fp 回调函数
+   */
+  static boolean subscribe(char* topic, poniter_fun fp);
+
+  /**
+   * 取消订阅指定topic
+   * @param topic 订阅的topic
+   */
+  static boolean unsubscribe(char* topic);
+
+
 };
 #endif
