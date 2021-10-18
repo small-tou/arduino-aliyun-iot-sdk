@@ -110,6 +110,16 @@ static void callback(char *topic, byte *payload, unsigned int length)
             }
         }
     }
+    else
+    {
+        for (int i = 0; i < DATA_CALLBACK_SIZE; i++)
+        {
+            if (poniter_array[i].key && strcmp(topic, poniter_array[i].key) == 0)
+            {
+                poniter_array[i].fp(doc.as<JsonVariant>());
+            }
+        }
+    }
 }
 
 static bool mqttConnecting = false;
